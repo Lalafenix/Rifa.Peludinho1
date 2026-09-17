@@ -441,8 +441,8 @@
       <h1>Uma segunda chance para o nosso peludinho</h1>
       <p class="lede">Ele sobreviveu a um acidente e agora precisa da nossa ajuda para continuar se recuperando.</p>
       <div class="hero-actions">
-        <a href="#raffle" class="btn btn-primary">Quero participar da rifa</a>
-        <a href="#help" class="btn btn-ghost">Quero ajudar</a>
+        <a href="#raffle" class="btn btn-primary" onclick="goToTab(event,'raffle')">Quero participar da rifa</a>
+        <a href="#help" class="btn btn-ghost" onclick="goToTab(event,'ajuda')">Quero ajudar</a>
       </div>
       <p class="trust-line">Cada contribuição faz a diferença. ❤️</p>
     </div>
@@ -599,7 +599,7 @@
     <h2>Uma pequena ajuda pode transformar uma vida. 🐾</h2>
     <p>Se você não puder participar, compartilhar essa rifa já será uma grande ajuda. Obrigada a todos que estão torcendo e contribuindo para a recuperação dele! ❤️</p>
     <div class="actions">
-      <a href="#raffle" class="btn" style="background:#fff;color:var(--accent-dark);">Participar da rifa</a>
+      <a href="#raffle" class="btn" style="background:#fff;color:var(--accent-dark);" onclick="goToTab(event,'raffle')">Participar da rifa</a>
       <a href="#" id="share-btn" class="btn btn-ghost">Compartilhar</a>
       <a href="#" id="whats-cta-2" target="_blank" class="btn" style="background:var(--whats);color:#fff;">Falar comigo</a>
     </div>
@@ -819,11 +819,24 @@ async function loadSheet() {
 
 function openTab(tabName, btn){
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
+  if(!btn){
+    btn = Array.from(document.querySelectorAll('.tab-btn')).find(b=>{
+      const m = b.getAttribute('onclick') && b.getAttribute('onclick').match(/openTab\('([^']+)'/);
+      return m && m[1] === tabName;
+    });
+  }
+  if(btn) btn.classList.add('active');
   document.querySelectorAll('[data-tab]').forEach(el=>{
     el.classList.toggle('tab-active', el.dataset.tab === tabName);
   });
   window.scrollTo({top:0, behavior:'smooth'});
+}
+
+/* Usado pelos botões de call-to-action (ex: "Quero participar da rifa") que
+   precisam trocar de aba em vez de só pular para uma âncora escondida */
+function goToTab(event, tabName){
+  if(event) event.preventDefault();
+  openTab(tabName);
 }
 
 /* Inicialização */
